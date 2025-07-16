@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-
+import Navbar from "../components/Navbar";
+import { NavLink } from "react-router-dom";
 const FraudMerchantsPage = () => {
   const [merchants, setMerchants] = useState([]);
   const [search, setSearch] = useState(0);
@@ -28,12 +29,13 @@ const FraudMerchantsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-100 to-yellow-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
+    <Navbar />
       <div className="max-w-5xl mx-auto">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">🚨 Fraudulent Merchants</h2>
+        <h2 className="text-3xl font-bold text-gray-800 mb-6 mt-6 text-white text-center"> Fraudulent Merchants</h2>
 
         <div className="mb-6">
-          <label className="block mb-1 font-medium text-gray-700">
+          <label className="block mb-1 font-medium text-gray-700 dark:text-white">
             Show merchants with frauds greater than:
           </label>
           <input
@@ -41,7 +43,7 @@ const FraudMerchantsPage = () => {
             value={search}
             onChange={handleFilter}
             placeholder="Enter fraud threshold"
-            className="border border-gray-300 p-2 rounded w-full max-w-sm"
+            className="border border-gray-300 p-2 rounded w-full max-w-sm dark:text-white"
           />
         </div>
 

@@ -1,5 +1,5 @@
-// import Navbar from "../components/Navbar";
-// import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 
 // const Home = ()=> {
@@ -53,7 +53,8 @@ export default function Home() {
 
   return (
     <div className="p-6 bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 min-h-screen">
-      <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">🏦 Bank Admin Dashboard</h1>
+    <Navbar />
+      <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6 mt-6 text-center">🏦 Bank Admin Dashboard</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
         <StatCard title="🧾 Daily Transactions" value={stats.transactionsToday} color="blue" />

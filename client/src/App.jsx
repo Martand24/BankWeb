@@ -6,6 +6,7 @@ import Issues from "./pages/Issues.jsx";
 import PageNotFound from './pages/PageNotFound.jsx';
 import SussyBaka from './pages/SussyBaka.jsx';
 import FraudMerchantsPage from './pages/Fraudmerch.jsx';
+import FraudTransactionApproval from './pages/Fraudapproval.jsx';
 function App() {
   return (
     <>
@@ -17,6 +18,7 @@ function App() {
         <Route path="/signup" element = {<Signup />} > </Route>
         <Route path = "Suscustomers" element= {<SussyBaka ></SussyBaka>} ></Route>
         <Route path='fraudmerchants' element={<FraudMerchantsPage />} />
+        <Route path='fraudtransactionslive' element={<FraudTransactionApproval />} />
         <Route path="*" element= {<PageNotFound />} />
       </Routes> 
     </BrowserRouter>

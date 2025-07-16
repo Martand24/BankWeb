@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import Card from "../components/Card";
 import { motion } from "framer-motion";
-
+import Navbar from "../components/Navbar";
 const SuspiciousUsers = () => {
   const [users, setUsers] = useState([]);
   const [count, setCount] = useState(0);
 
-  // Dummy fetch simulation
   useEffect(() => {
     // Replace with actual API fetch
     const fakeData = [
@@ -19,9 +18,10 @@ const SuspiciousUsers = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-purple-100 p-6 bg-black">
+    <div className="min-h-screen dark:text-white bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
+    <Navbar />
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">🚨 Suspicious Users Tracker</h2>
+        <h2 className="text-3xl font-bold text-gray-800 mb-6 text-white text-center mt-6"> Suspicious Users Tracker</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <Card
@@ -38,7 +38,7 @@ const SuspiciousUsers = () => {
           transition={{ duration: 0.5 }}
           className="bg-white rounded-xl shadow-lg overflow-x-auto p-4"
         >
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">🧍 List of Flagged Users</h3>
+          <h3 className="text-xl font-semibold text-gray-800 mb-4"> List of Flagged Users</h3>
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-100">
               <tr>

@@ -1,63 +1,70 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X } from "lucide-react"; // Optional: use `react-icons` or any other icon lib
+import { Menu, X } from "lucide-react";
 
-const Navbar = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+export default function Navbar() {
+  const [open, setOpen] = useState(false);
+
+  const navLinks = [
+    { path: "/", name: "Home" },
+    { path: "/suscustomers", name: "Suspicious Users" },
+    { path: "/fraudmerchants", name: "Fraud Merchants" },
+    { path: "/fraudtransactionslive", name: "Approve Transactions" },
+    { path: "/logout", name: "Logout" },
+  ];
 
   return (
-    <nav className="bg-gradient-to-r from-purple-600 to-pink-500 text-white px-6 py-4 shadow-md">
-      <div className="container mx-auto flex justify-between items-center">
-        {/* Brand */}
-        <Link to="/" className="text-2xl font-bold tracking-wide hover:text-yellow-200">
+<nav className="bg-gradient-to-r from-purple-100 via-white to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 shadow-md border-b border-purple-300 dark:border-gray-700 text-gray-800 dark:text-white backdrop-blur-lg z-50">
+
+      <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+        <Link to="/" className="text-2xl font-bold tracking-wide">
           UCO BANK
         </Link>
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex space-x-6">
-          <Link to="/" className="hover:text-yellow-200 font-medium">Home</Link>
-          <Link to="/submit" className="hover:text-yellow-200 font-medium">Submit Tool</Link>
-          <Link to="/login" className="hover:text-yellow-200 font-medium">Login</Link>
-          <Link to="/signup" className="hover:text-yellow-200 font-medium"><div className="rounded-full bg-blue-600 px-2 py-1">Signup</div></Link>
+        <div className="md:hidden">
+          <button onClick={() => setOpen(!open)} className="focus:outline-none">
+            {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
 
-        {/* Mobile Toggle */}
-        <button
-          className="md:hidden focus:outline-none"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-        </button>
+        <ul className="hidden md:flex space-x-6">
+          {navLinks.map((link) => (
+            <li key={link.path}>
+              <NavLink
+                to={link.path}
+                className={({ isActive }) =>
+                  `hover:underline ${
+                    isActive ? "font-bold underline" : "font-medium"
+                  }`
+                }
+              >
+                {link.name}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="md:hidden mt-3 flex flex-col space-y-3 px-4 pb-4">
-          <Link
-            to="/"
-            onClick={() => setMobileMenuOpen(false)}
-            className="hover:text-yellow-200"
-          >
-            Home
-          </Link>
-          <Link
-            to="/submit"
-            onClick={() => setMobileMenuOpen(false)}
-            className="hover:text-yellow-200"
-          >
-            Submit Tool
-          </Link>
-          <Link
-            to="/login"
-            onClick={() => setMobileMenuOpen(false)}
-            className="hover:text-yellow-200"
-          >
-            Login
-          </Link>
-        </div>
+      {open && (
+        <ul className="md:hidden px-4 pb-4 space-y-2 bg-purple-700">
+          {navLinks.map((link) => (
+            <li key={link.path}>
+              <NavLink
+                to={link.path}
+                className={({ isActive }) =>
+                  `block py-2 hover:underline ${
+                    isActive ? "font-bold underline" : "font-medium"
+                  }`
+                }
+                onClick={() => setOpen(false)}
+              >
+                {link.name}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
       )}
     </nav>
   );
-};
-
-export default Navbar;
+}
