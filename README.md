@@ -2,10 +2,6 @@
 
 This API provides endpoints for a comprehensive fraud detection system with admin panel functionality. It handles payment processing, fraud detection, admin reviews, customer management, and transaction monitoring using advanced ML models and graph neural networks.
 
-## Authentication
-
-> **Note:** Currently, no authentication is required. In production, implement proper authentication middleware.
-
 ## Admin Panel Endpoints
 
 ### 1. Get Admin Statistics
