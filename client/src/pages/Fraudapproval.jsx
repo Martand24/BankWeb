@@ -38,9 +38,9 @@ export default function FraudTransactionApproval() {
   };
 
   return (
-    <div className="p-6 min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="p-6 min-h-screen bg-gradient-to-br from-[#f5f8ff] via-[#e8f0fe] to-[#fdfdff] bg-fixed animate-gradient dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
     <Navbar />
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-8 mt-6 text-white text-center">
+      <h1 className="text-3xl font-bold text-center text-gray-800 mb-8 mt-6 dark:text-white text-center">
          Fraud Transaction Approval Panel
       </h1>
 

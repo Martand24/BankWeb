@@ -23,7 +23,6 @@ export default function Card({ title, value, color = "blue", icon = null }) {
           <h4 className="text-sm text-gray-500 font-medium">{title}</h4>
           <p className="text-2xl font-semibold text-gray-800 dark:text-white mt-1">{value}</p>
         </div>
-        {icon && <div className="text-3xl text-gray-400">{icon}</div>}
       </div>
     </motion.div>
   );
