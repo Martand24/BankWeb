@@ -49,6 +49,11 @@ const pieData = [
   { name: "Rejected", value: 300 },
   { name: "Pending", value: 300 },
 ];
+const pieData1 = [
+  {name: "Approved", value: 300},
+  {name : "Rejected", value: 500},
+  {name: "Pending", value:300}
+]
 
 const COLORS = ["#34d399", "#f87171", "#facc15"];
 
@@ -183,7 +188,7 @@ export default function AnalyticsPage() {
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie
-                data={pieData}
+                data={pieData1}
                 dataKey="value"
                 nameKey="name"
                 cx="50%"
@@ -191,7 +196,7 @@ export default function AnalyticsPage() {
                 outerRadius={80}
                 label
               >
-                {pieData.map((entry, index) => (
+                {pieData1.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
