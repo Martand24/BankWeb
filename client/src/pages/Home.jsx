@@ -86,7 +86,7 @@ export default function Home() {
         /> */}
         <StatCard
           title=" Fraud % (Overall)"
-          value={`${(stats.overall_fraud_rate * 100).toFixed(2)}%`}
+          value={`${(stats.overall_fraud_rate ).toFixed(2)}%`}
           color="rose"
         />
         {/* <StatCard

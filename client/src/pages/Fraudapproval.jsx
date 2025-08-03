@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
+
 const dummyFraudTransactions = [
   {
     id: "TXN001",
@@ -27,11 +28,33 @@ const dummyFraudTransactions = [
   },
 ];
 
+// Predefined reasons for approval/rejection
+const approvalReasons = [
+  "Called the customer and confirmed the transaction",
+  "Verified with merchant and confirmed legitimacy",
+  "Transaction pattern matches customer's normal behavior",
+  "Additional documentation provided and verified",
+  "Other"
+];
+
+const rejectionReasons = [
+  "Customer denied making this transaction",
+  "Suspicious transaction pattern detected",
+  "Merchant verification failed",
+  "Insufficient documentation provided",
+  "Other"
+];
+
 export default function FraudTransactionApproval() {
   const [stats, setStats] = useState(null);
-    const [error, setError] = useState(null);
+  const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedAction, setSelectedAction] = useState(null);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [selectedReason, setSelectedReason] = useState("");
+  const [customReason, setCustomReason] = useState("");
   
-    useEffect(() => {
+  useEffect(() => {
     fetch("http://144.24.146.33:8000/admin/pending_transactions")
       .then((res) => {
         console.log(res);
@@ -47,14 +70,13 @@ export default function FraudTransactionApproval() {
       });
   }, []);
   
-  
-    if (error) {
-      return <div className="text-center text-red-600 mt-10">{error}</div>;
-    }
-  
-    if (!stats) {
-      return <div className="text-center mt-10 text-gray-600 dark:text-gray-300">Loading transactions ..</div>;
-    }
+  if (error) {
+    return <div className="text-center text-red-600 mt-10">{error}</div>;
+  }
+
+  if (!stats) {
+    return <div className="text-center mt-10 text-gray-600 dark:text-gray-300">Loading transactions ..</div>;
+  }
 
   const handleAction = (id, action) => {
     const updated = stats.map((txn) =>
@@ -63,49 +85,81 @@ export default function FraudTransactionApproval() {
     setStats(updated);
   };
 
-  function reviewTransaction(id, action, txn) {
-  fetch("http://144.24.146.33:8000/admin/review_transaction", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      id: id,
-      action: action, // "approve" or "reject"
-    }),
-  })
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error(`Server responded with ${res.status}`);
-      }
-      return res.json();
+  const openReasonModal = (action, transaction) => {
+    setSelectedAction(action);
+    setSelectedTransaction(transaction);
+    setSelectedReason("");
+    setCustomReason("");
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedAction(null);
+    setSelectedTransaction(null);
+    setSelectedReason("");
+    setCustomReason("");
+  };
+
+  const submitWithReason = () => {
+    if (!selectedReason) {
+      alert("Please select a reason");
+      return;
+    }
+
+    const finalReason = selectedReason === "Other" ? customReason : selectedReason;
+    
+    reviewTransaction(selectedTransaction.id, selectedAction, selectedTransaction, finalReason);
+    closeModal();
+  };
+
+  function reviewTransaction(id, action, txn, reason) {
+    fetch("http://144.24.146.33:8000/admin/review_transaction", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: id,
+        action: action, // "approve" or "reject"
+        reason: reason,
+      }),
     })
-    .then((data) => {
-      console.log("Success:", data.message);
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Server responded with ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        console.log("Success:", data.message);
         setStats((prevStats) =>
-        prevStats.map((txn) =>
-          txn.id === id
-            ? { ...txn, status: "Awaiting customer confirmation" }
-            : txn
-        )
-      );
-    })
-    .catch((err) => {
-      console.error("Error:", err.message);
-              setStats((prevStats) =>
-        prevStats.map((txn) =>
-          txn.id === id
-            ? { ...txn, status: "Rejected" }
-            : txn
-        )
-      );
-    }); 
+          prevStats.map((txn) =>
+            txn.id === id
+              ? { ...txn, status: (action=="approve" ?"Awaiting customer confirmation":"Rejected"), reason: reason }
+              : txn
+          )
+        );
+      })
+      .catch((err) => {
+        console.error("Error:", err.message);
+        setStats((prevStats) =>
+          prevStats.map((txn) =>
+            txn.id === id
+              ? { ...txn, status: "Rejected", reason: reason }
+              : txn
+          )
+        );
+      }); 
   }
 
+  const getReasonsList = () => {
+    return selectedAction === "approve" ? approvalReasons : rejectionReasons;
+  };
 
   return (
     <div className="p-6 min-h-screen bg-gradient-to-br from-[#f5f8ff] via-[#e8f0fe] to-[#fdfdff] bg-fixed animate-gradient dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-    <Navbar />
+      <Navbar />
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-8 mt-6 dark:text-white text-center">
          Fraud Transaction Approval Panel
       </h1>
@@ -149,14 +203,14 @@ export default function FraudTransactionApproval() {
                 </td>
                 <td className="p-3 text-center space-x-2">
                   <button
-                    onClick={() => reviewTransaction(txn.id, "approve", txn)}
+                    onClick={() => openReasonModal("approve", txn)}
                     className="px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600 disabled:opacity-50"
                     disabled={txn.status !== "pending"}
                   >
                     ✅ Approve
                   </button>
                   <button
-                    onClick={() => reviewTransaction(txn.id, "reject", txn)}
+                    onClick={() => openReasonModal("reject", txn)}
                     className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 disabled:opacity-50"
                     disabled={txn.status !== "pending"}
                   >
@@ -175,6 +229,76 @@ export default function FraudTransactionApproval() {
           </tbody>
         </table>
       </div>
+
+      {/* Reason Selection Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <h2 className="text-xl font-bold mb-4 text-gray-800">
+              {selectedAction === "approve" ? "Approve" : "Reject"} Transaction
+            </h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Transaction ID: {selectedTransaction?.id}
+            </p>
+            
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Select Reason:
+              </label>
+              <div className="space-y-2">
+                {getReasonsList().map((reason, index) => (
+                  <label key={index} className="flex items-center">
+                    <input
+                      type="radio"
+                      name="reason"
+                      value={reason}
+                      checked={selectedReason === reason}
+                      onChange={(e) => setSelectedReason(e.target.value)}
+                      className="mr-2"
+                    />
+                    <span className="text-sm text-gray-700">{reason}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {selectedReason === "Other" && (
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Specify Custom Reason:
+                </label>
+                <textarea
+                  value={customReason}
+                  onChange={(e) => setCustomReason(e.target.value)}
+                  placeholder="Please provide a detailed reason..."
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  rows="3"
+                />
+              </div>
+            )}
+
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 text-gray-600 bg-gray-200 rounded-md hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitWithReason}
+                disabled={!selectedReason || (selectedReason === "Other" && !customReason.trim())}
+                className={`px-4 py-2 text-white rounded-md ${
+                  selectedAction === "approve" 
+                    ? "bg-green-500 hover:bg-green-600" 
+                    : "bg-red-500 hover:bg-red-600"
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                {selectedAction === "approve" ? "Approve" : "Reject"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
